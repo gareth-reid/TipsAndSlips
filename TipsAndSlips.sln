@@ -1,0 +1,17 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TipsAndSlips", "TipsAndSlips\TipsAndSlips.csproj", "{AC4975F9-A4A4-4C85-A182-1EDD1B36B2C1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AC4975F9-A4A4-4C85-A182-1EDD1B36B2C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC4975F9-A4A4-4C85-A182-1EDD1B36B2C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC4975F9-A4A4-4C85-A182-1EDD1B36B2C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC4975F9-A4A4-4C85-A182-1EDD1B36B2C1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

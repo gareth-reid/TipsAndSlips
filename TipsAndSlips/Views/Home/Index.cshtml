@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@section Scripts {
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <script type="text/javascript">$(document).ready(function () {
+        
+    $('.results').hide();
+    $('.loader').hide();
+            $("#search").donetyping(function (e) {
+                $('#results-bar').html("");                
+                $('.loader').show();
+                $('.results').hide();
+                if ($("#search").val().length > 2) {
+                    jQuery.ajax({
+                        url: "/Home/Search",
+                        type: "GET",
+                        data: { 'param': $("#search").val() },
+                        success: function (data) {
+                            $('#results-bar').html("");
+                            var results = $.parseJSON(data);
+                            $.each(results.response, function (i, jsondata) {
+                                $('#results-bar').addClass("expand");                                
+                                $('.loader').hide();
+                                $('.results').show();
+                                var localDate = new Date(jsondata.event.openDate);
+                                var localDateFormatted = $.format.date(localDate, "dd/MM/yyyy hh:mm a")
+
+                                $("#results-bar").append("<div class='search_input' id='results' >"
+                                    + jsondata.event.name + "</div>"
+                                    + "<div style='font-size: small' class='search_input' id='results' >" + localDateFormatted.toString() + " ("
+                                    + jsondata.marketCount
+                                    + " markets)</div><hr style='border-color: #ffffff'/>")
+                            });
+                        },
+                        error: function () {
+                            $('.loader').hide();
+                            $('.results').show();
+                            $("#results-bar").html("<div class='search_input' id='results'>Failed to find events</div>");
+                        }
+                    });
+                } else {
+                    $('.loader').hide();
+                    $('.results').hide();
+                }
+        });
+    })</script>
+    }
+
+    <div class="text-center">
+        <h1 class="display-4">Tips And Slips</h1>
+        <p>Coming Soon. Collaboration for like minded sports multi punters.</p>
+        <p>
+            <div class="container h-100">
+                <div class="d-flex justify-content-center h-100">
+                    <div class="searchbar" >
+                        <input class="search_input" type="text" name="search" id="search" placeholder="Search...">
+                        <a href="#" class="search_icon"><i class="fas fa-search"></i></a>
+                    </div>                    
+                </div>
+            </div>
+        </p>
+        <p>
+            <div class="container h-100 results">
+                <div class="d-flex justify-content-center h-100">
+                    <div class="searchbar" id="results-bar">
+                    </div>                    
+                </div>
+            </div>
+            <div class="container h-100 loader">
+                <div class="d-flex justify-content-center h-100">                    
+                    <div class="searchbar">
+                        <img src="~/images/07-loader.gif" class="loader" width="100px" height='100px' />
+                    </div>
+                </div>
+            </div>
+
+        </p>
+    </div>
+    
+
