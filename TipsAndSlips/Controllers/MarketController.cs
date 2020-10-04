@@ -10,13 +10,13 @@ using TipsAndSlips.Models;
 
 namespace TipsAndSlips.Controllers
 {
-    public class HomeController : Controller
+    public class MarketController : Controller
     {
         private readonly ILogger<HomeController> _logger;
         private HttpClient _client = new HttpClient();
         private String _apiUrl;
 
-        public HomeController(ILogger<HomeController> logger)
+        public MarketController(ILogger<HomeController> logger)
         {
 #if DEBUG
             _apiUrl = "http://localhost:7071";
@@ -42,21 +42,9 @@ namespace TipsAndSlips.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
                 
-        public async Task<String> Search(String param)
+        public async Task<String> Display(String marketId)
         {
-            var content = await _client.GetStringAsync(_apiUrl + "/api/BFSearch?searchText=" + param);
-            return content;
-        }
-
-        public async Task<String> Markets(String eventId)
-        {
-            var content = await _client.GetStringAsync(_apiUrl + "/api/BFMarketCatalogue?eventId=" + eventId);
-            return content;
-        }
-
-        public async Task<String> MarketDetails(String marketId)
-        {
-            var content = await _client.GetStringAsync(_apiUrl + "/api/BFMarketBook?marketId=" + marketId);
+            var content = await _client.GetStringAsync(_apiUrl + "/api/BFSearch?searchText=" + marketId);
             return content;
         }
     }

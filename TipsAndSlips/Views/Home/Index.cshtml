@@ -3,13 +3,13 @@
 }
 @section Scripts {
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-    <script type="text/javascript">$(document).ready(function () {
-        
-    $('.results').hide();
-    $('.loader').hide();
+    <script type="text/javascript">$(document).ready(function () {            
+            $('.results').hide();
+            $('.loader-div').hide();
+            
             $("#search").donetyping(function (e) {
-                $('#results-bar').html("");                
-                $('.loader').show();
+                $('#results-bar').html("");
+                $('.loader-div').show();
                 $('.results').hide();
                 if ($("#search").val().length > 2) {
                     jQuery.ajax({
@@ -19,32 +19,86 @@
                         success: function (data) {
                             $('#results-bar').html("");
                             var results = $.parseJSON(data);
+
                             $.each(results.response, function (i, jsondata) {
-                                $('#results-bar').addClass("expand");                                
-                                $('.loader').hide();
-                                $('.results').show();
+                                $('.loader-div').hide();
+                                $('.results').show();                               
+                                
                                 var localDate = new Date(jsondata.event.openDate);
                                 var localDateFormatted = $.format.date(localDate, "dd/MM/yyyy hh:mm a")
 
-                                $("#results-bar").append("<div class='search_input' id='results' >"
+                                $("#results-bar").append("<div class='search_input results market' id='" + jsondata.event.id + "' >"
                                     + jsondata.event.name + "</div>"
-                                    + "<div style='font-size: small' class='search_input' id='results' >" + localDateFormatted.toString() + " ("
+                                    + "<div style='font-size: small' class='search_input results market' id='" + jsondata.event.id + "' >" + localDateFormatted.toString() + " ("
                                     + jsondata.marketCount
                                     + " markets)</div><hr style='border-color: #ffffff'/>")
                             });
                         },
                         error: function () {
-                            $('.loader').hide();
+                            $('.loader-div').hide();
                             $('.results').show();
-                            $("#results-bar").html("<div class='search_input' id='results'>Failed to find events</div>");
+                            $("#results-bar").html("<div class='search_input results' id='results'>Failed to find events</div>");
+                            $('#results-bar').addClass("expand");
                         }
                     });
                 } else {
-                    $('.loader').hide();
+                    $('.loader-div').hide();
                     $('.results').hide();
                 }
-        });
-    })</script>
+            });
+        })
+        $(document).on('click', '.market', function (e) {
+            var eventId = e.target.id;
+            $('#results-bar').html("");
+            $('.loader-div').show();
+            $('.results').hide();            
+
+            jQuery.ajax({
+                url: "/Home/Markets",
+                type: "GET",
+                data: { 'eventId': eventId },
+                success: function (data) {
+                    $('#results-bar').html("");
+                    var results = $.parseJSON(data);
+                    $.each(results.response, function (i, marketsJson) {
+                        $('#results-bar').addClass("expand");
+                        var marketId = marketsJson.marketId;
+                        var marketName = marketsJson.marketName;
+                        var price = "";
+
+                        jQuery.ajax({
+                            url: "/Home/MarketDetails",
+                            type: "GET",
+                            data: { 'marketId': marketId },
+                            success: function (marketDetails) {
+                                var resultsMarketDetails = $.parseJSON(marketDetails);
+                                $.each(resultsMarketDetails.response[0].runners, function (i, marketDetailsJson) {
+
+                                    price = marketDetailsJson.lastPriceTraded;
+                                    handicap = marketDetailsJson.handicap;
+                                    if (handicap == 'null' || '0') {
+                                        handicap = ""
+                                    }
+
+                                    $("#results-bar").append("<div class='search_input market' id='" + marketId + "' >"
+                                        + marketName + " " + handicap + " - Price:" + price + "</div>"
+                                        + "<hr style = 'border-color: #ffffff' /> ");
+                                });
+                            }, error: function () { }
+                        });
+                    });
+                },
+                error: function () {
+                    $('.loader-div').hide();
+                    $('.results').show();
+                    $("#results-bar").html("<div class='search_input results' id='results'>Failed to find events</div>");
+                }
+            });
+
+
+            $('.loader-div').hide();
+            $('.results').show();
+        });</script>
     }
 
     <div class="text-center">
@@ -61,18 +115,12 @@
             </div>
         </p>
         <p>
-            <div class="container h-100 results">
-                <div class="d-flex justify-content-center h-100">
-                    <div class="searchbar" id="results-bar">
-                    </div>                    
-                </div>
+            <div class="container h-100 results">                
+                <div class="resultsbar" id="results-bar">
+                </div> 
             </div>
-            <div class="container h-100 loader">
-                <div class="d-flex justify-content-center h-100">                    
-                    <div class="searchbar">
-                        <img src="~/images/07-loader.gif" class="loader" width="100px" height='100px' />
-                    </div>
-                </div>
+            <div class="container h-100 loader-div">                                  
+                <img src="~/images/07-loader.gif" class="loader-div" width="100px" height='100px' />                    
             </div>
 
         </p>
