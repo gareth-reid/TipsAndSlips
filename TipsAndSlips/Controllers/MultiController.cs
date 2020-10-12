@@ -4,8 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using TipsAndSlips.Models;
 
 namespace TipsAndSlips.Controllers
@@ -26,9 +28,22 @@ namespace TipsAndSlips.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string id)
+        {            
+            var content = _client.GetStringAsync(_apiUrl + "/api/GetMulti?count=1&id="+ id).Result;
+            var multis = JsonConvert.DeserializeObject<List<MultiBuilder>>(content);
+            var multi = multis.First();
+            multi.FinalMarkets.Sort();
+            ViewData["MultiData"] = multi;
+            return View(multi);
+        }
+
+        public IActionResult List(string multiId)
         {
-            return View();
+            var content = _client.GetStringAsync(_apiUrl + "/api/GetMulti?count=1000").Result;
+            var multis = JsonConvert.DeserializeObject<List<MultiBuilder>>(content);
+            ViewData["ListMultiData"] = multis;
+            return View(multis);
         }
 
         public IActionResult Privacy()
@@ -40,12 +55,6 @@ namespace TipsAndSlips.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        public async Task<String> Display(String marketId)
-        {
-            var content = await _client.GetStringAsync(_apiUrl + "/api/BFSearch?searchText=" + marketId);
-            return content;
-        }
+        }       
     }
 }
