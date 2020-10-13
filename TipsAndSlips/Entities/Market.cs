@@ -50,6 +50,11 @@ namespace Entities
             {
                 timeDisplay = Math.Floor(remaining.TotalDays) + " days";
             }
+            else if (hours > 2)
+            {
+                Urgency = "info";
+                timeDisplay = hours + " hour(s)"; ;
+            }
             else if (hours > 0)
             {
                 Urgency = "info";

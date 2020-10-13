@@ -38,12 +38,24 @@ namespace TipsAndSlips.Controllers
             return View(multi);
         }
 
-        public IActionResult List(string multiId)
+        public IActionResult List()
         {
             var content = _client.GetStringAsync(_apiUrl + "/api/GetMulti?count=1000").Result;
             var multis = JsonConvert.DeserializeObject<List<MultiBuilder>>(content);
             ViewData["ListMultiData"] = multis;
             return View(multis);
+        }
+
+        public IActionResult UpdateResults(string id)
+        {
+            _client.GetStringAsync(_apiUrl + "/api/UpdateMultiResults?id=" + id);
+            return RedirectToAction("Index", new { id });
+        }
+
+        public IActionResult UpdateResultsAll()
+        {
+            _client.GetStringAsync(_apiUrl + "/api/UpdateMultiResults?id=");
+            return RedirectToAction("List");
         }
 
         public IActionResult Privacy()

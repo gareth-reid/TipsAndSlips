@@ -50,7 +50,7 @@ namespace TipsAndSlips.Controllers
 
         public async Task<String> Markets(String eventId)
         {
-            var content = await _client.GetStringAsync(_apiUrl + "/api/BFMarketCatalogue?eventId=" + eventId);
+            var content = await _client.GetStringAsync(_apiUrl + "/api/GetMarkets?eventId=" + eventId);
             return content;
         }
 

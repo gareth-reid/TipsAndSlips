@@ -47,7 +47,7 @@
                 }
             });
         })
-        $(document).on('click', '.market', function (e) {
+        $(document).on('click', '.market', function (e) {            
             var eventId = e.target.id;
             $('#results-bar').html("");
             $('.loader-div').show();
@@ -59,45 +59,34 @@
                 data: { 'eventId': eventId },
                 success: function (data) {
                     $('#results-bar').html("");
-                    var results = $.parseJSON(data);
-                    $.each(results.response, function (i, marketsJson) {
+                    var results = $.parseJSON(data);                    
+                    $.each(results, function (i, marketsJson) {
                         $('#results-bar').addClass("expand");
-                        var marketId = marketsJson.marketId;
+                        var marketId = marketsJson.marketId;                        
                         var marketName = marketsJson.marketName;
-                        var price = "";
+                        var price = marketsJson.backPrice;
+                        var handicap = marketsJson.handicap;
+                        var selection = marketsJson.selection;
+                        if (handicap == 'null' || '0') {
+                            handicap = ""
+                        }
+                                                
+                        $('.loader-div').hide();
+                        $('.results').show();
 
-                        jQuery.ajax({
-                            url: "/Home/MarketDetails",
-                            type: "GET",
-                            data: { 'marketId': marketId },
-                            success: function (marketDetails) {
-                                var resultsMarketDetails = $.parseJSON(marketDetails);
-                                $.each(resultsMarketDetails.response[0].runners, function (i, marketDetailsJson) {
-
-                                    price = marketDetailsJson.lastPriceTraded;
-                                    handicap = marketDetailsJson.handicap;
-                                    if (handicap == 'null' || '0') {
-                                        handicap = ""
-                                    }
-
-                                    $("#results-bar").append("<div class='search_input market' id='" + marketId + "' >"
-                                        + marketName + " " + handicap + " - Price:" + price + "</div>"
-                                        + "<hr style = 'border-color: #ffffff' /> ");
-                                });
-                            }, error: function () { }
-                        });
-                    });
+                        $("#results-bar").append("<div class='search_input market' id='" + marketId + "' >"
+                            + marketName + ": " + selection + "</div>"
+                            + "<div><button style='width:80px;' class='btn btn-danger'>$" + price + "</button></div>"
+                            + "<hr style = 'border-color: #ffffff' /> ");
+                    });                      
+                    
                 },
                 error: function () {
                     $('.loader-div').hide();
                     $('.results').show();
                     $("#results-bar").html("<div class='search_input results' id='results'>Failed to find events</div>");
                 }
-            });
-
-
-            $('.loader-div').hide();
-            $('.results').show();
+            });           
         });</script>
     }
 
@@ -126,4 +115,3 @@
         </p>
     </div>
     
-
